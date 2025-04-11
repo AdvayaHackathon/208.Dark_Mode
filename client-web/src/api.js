@@ -1,1 +1,0 @@
-export const API_URL = `https://profound-adequate-salmon.ngrok-free.app`;

@@ -4,7 +4,7 @@ import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { Model } from './Model';
 import { Effects, OrbitControls } from '@react-three/drei';
 import { UnrealBloomPass } from "three-stdlib";
-import { API_URL } from '@/api';
+import { API_URL } from '@/app/helpers/api';
 extend({ UnrealBloomPass });
 
 function Cube(props) {
@@ -22,7 +22,7 @@ function Cube(props) {
   );
 }
 
-function Avatar({text}) {
+function Avatar({ text, closest, locs }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
   const [playAudio, setPlayAudio] = useState(false);
@@ -34,7 +34,7 @@ function Avatar({text}) {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
         },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text, closest, locs })
       });
       const resJson = await res.json();
       console.log(resJson);
@@ -51,23 +51,23 @@ function Avatar({text}) {
   }
   const buttonRef = useRef();
   useEffect(() => {
-    if(text){
+    if (text || closest) {
       handleSubmit();
     }
-  },[text])
+  }, [text, closest])
   useEffect(() => {
     if (fileCode) {
       setPlayAudio(true);
     }
-  },[fileCode]);
+  }, [fileCode]);
   return (
     <>
-      
+
       <Canvas
-        camera={{ position: [0, 0, 2.5], fov: 50, far: 500000, near: 0.1 }} style={{ width: '100%', height: '100%' ,}}
-        gl={{alpha: true}}
-        >
-    
+        camera={{ position: [0, 0, 2.5], fov: 50, far: 500000, near: 0.1 }} style={{ width: '100%', height: '100%', }}
+        gl={{ alpha: true }}
+      >
+
         <ambientLight />
         {/* <OrbitControls /> */}
         {/* <Effects disableGamma>

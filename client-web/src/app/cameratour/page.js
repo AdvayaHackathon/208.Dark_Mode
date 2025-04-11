@@ -2,37 +2,83 @@
 import { useState, useEffect, useRef } from "react";
 import Avatar from "@/components/Avatar";
 import Dictaphone from "@/components/voice";
+import { getDistance, nearLoc } from "../helpers/loc";
 
 
 export default function Home() {
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [locs, setLocs] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(false);
+  const [closest, setClosest] = useState(null);
   const [cameraError, setCameraError] = useState(null);
   const videoRef = useRef(null);
-  const [text,setText] = useState("");
-
-
-  
+  const [text, setText] = useState("");
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
+      const watchId = navigator.geolocation.watchPosition(
         (position) => {
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
+          const { latitude, longitude, accuracy } = position.coords;
+
+          console.log(`Your location: (${latitude}, ${longitude})`);
+
+          let textAll = "";
+          let bestMatch = null;
+          let bestMatchDistance = Infinity;
+          const locs = {
+            lat: latitude,
+            long: longitude,
+            acc: accuracy,
+            nearLoc: []
+          };
+
+          for (const [name, loc] of Object.entries(nearLoc)) {
+            const dist = getDistance(latitude, longitude, loc.lat, loc.long);
+            const combinedAcc = accuracy + loc.acc;
+            locs.nearLoc.push({ name, ...loc, dist });
+            const line = `${name}: ${dist.toFixed(2)} meters away (±${loc.acc}m)\n`;
+            // textAll += line;
+            console.log(line);
+            if (dist <= combinedAcc && dist < bestMatchDistance) {
+              bestMatch = name;
+              bestMatchDistance = dist;
+            }
+          }
+          setLocs(locs);
+          setClosest(bestMatch);
         },
         (error) => {
-          setLocationError(`Error getting location: ${error.message}`);
+          console.error("Error getting location:", error.message);
         },
-        { enableHighAccuracy: true }
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
       );
-    } else {
-      setLocationError("Geolocation is not supported by this browser.");
+
+      return () => navigator.geolocation.clearWatch(watchId);
     }
   }, []);
+  // useEffect(() => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setLocation({
+  //           latitude: position.coords.latitude,
+  //           longitude: position.coords.longitude,
+  //         });
+  //       },
+  //       (error) => {
+  //         setLocationError(`Error getting location: ${error.message}`);
+  //       },
+  //       { enableHighAccuracy: true }
+  //     );
+  //   } else {
+  //     setLocationError("Geolocation is not supported by this browser.");
+  //   }
+  // }, []);
 
   // Handle camera access
   const startCamera = async () => {
@@ -73,17 +119,17 @@ export default function Home() {
         {/* Camera Section */}
         {!cameraPermission && !cameraError && (
           <div className="absolute inset-0 flex items-center justify-center z-50 bg-black">
-          <button
-            onClick={startCamera}
-            className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105 animate-pulse"
-          >
-            <span className="relative z-10 flex items-center justify-center gap-2">
-              Start the tour
-             
-            </span>
-            <span className="absolute inset-0 w-full h-full bg-white/20 transform -translate-x-full hover:translate-x-0 transition-transform duration-300 ease-out group-hover:translate-x-full"></span>
-          </button>
-        </div>
+            <button
+              onClick={startCamera}
+              className="relative overflow-hidden group bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg hover:shadow-blue-500/50 transition-all duration-300 transform hover:scale-105 animate-pulse"
+            >
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                Start the tour
+
+              </span>
+              <span className="absolute inset-0 w-full h-full bg-white/20 transform -translate-x-full hover:translate-x-0 transition-transform duration-300 ease-out group-hover:translate-x-full"></span>
+            </button>
+          </div>
         )}
 
         {cameraError && (
@@ -106,7 +152,7 @@ export default function Home() {
         {/* Avatar positioned in the middle */}
         <div className="absolute h-[50%] w-[50%]  flex items-center top-85 bottom-10 right-0 justify-center pointer-events-none ">
           <div className="w-[100%] h-[100%]">
-            <Avatar text={text} />
+            <Avatar text={text} closest={closest} locs={locs} />
           </div>
         </div>
 
@@ -138,23 +184,23 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          
-          
+
+
           </div>
-          
+
         )}
 
         {cameraPermission && (
           <div className="absolute bottom-8 left-0 right-0 flex justify-center space-x-4 z-10">
-           
+
             <div>
-                <Dictaphone setText={setText}/>
+              <Dictaphone setText={setText} />
             </div>
-          
+
           </div>
-          
+
         )}
-        
+
       </div>
     </div>
   );

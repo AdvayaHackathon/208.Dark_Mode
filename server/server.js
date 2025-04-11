@@ -68,14 +68,36 @@ function convertMp3ToOgg(fileCode) {
   }
 }
 
-async function getAiAns(text) {
+const spotsDetails = {
+  "stockTicker": `Welcome to the Stock Ticker Display! This modern digital board showcases real-time stock market movements and economic indicators, giving you a taste of the financial world at a glance. It's a favorite spot for finance enthusiasts and curious minds alike.`,
+  "vendingMachine": `Feeling thirsty or need a quick snack? The vending machine is right here, fully stocked with goodies to keep you energized between classes or tours. It's a reliable pitstop for a quick refresh!`,
+  "mbaBridge": `This charming little bridge connects the main academic block with the MBA wing. As you walk across, take a moment to appreciate the blend of architectural design and the peaceful vibe of the campus.`,
+  "mbaAILab": `Welcome to the AI Lab—the innovation hub of the MBA block! This space is equipped with advanced computing tools and is where cutting-edge projects and machine learning ideas come to life.`,
+  "mbaDigitalClassroom": `Step into the Digital Classroom, a smart space built for interactive and hybrid learning. With high-tech projectors and collaborative tools, it's designed to deliver immersive educational experiences.`
+}
+
+async function getAiAns(text, closest, locs) {
   try {
     const ai = new GoogleGenAI({ apiKey: GEMINI_KEY });
+    let contextUser = "";
+    if (closest !== null) {
+      contextUser = locs[closest];
+    }
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
       contents: `You are a AI Tour Guide, name is Deepiki. Answer user query in 2-3 sentences.
+      You should also answer query based on user location. The user location is given to you in
+      JSON format of this format {lat: number, long: number, acc: number}, 
+      and we also give you near location of travel spots to you, in the same JSON format.
+
+      ${nearLoc ? JSON.stringify(nearLoc) : "Near loc should be given. Neglect that for now."}
+      ${closest ? JSON.stringify(contextUser) : "You are not close to any travel spot"}
+      ${closest && `You are closet to ${closest}, here is the details of that place in way the 
+      tour guide would explain them
       
-      Query: ${text}`,
+      ${spotsDetails[closest]}}`}
+      
+      Query: ${text ? text : "No query given by user, give brief about their current place"}`,
     });
     console.log(response.text);
     return response.text;
@@ -87,7 +109,7 @@ async function getAiAns(text) {
 
 const app = express();
 const PORT = 9000;
-const CORS_ORIGIN = "https://live-wombat-badly.ngrok-free.app";
+const CORS_ORIGIN = "http://localhost:3000";
 app.set("trust proxy", 1);
 app.use((_, res, next) => {
   res.setHeader("ngrok-skip-browser-warning", "true");
@@ -108,8 +130,8 @@ app.use("/audio", express.static("./public/audio"));
 app.post("/ai/talk", async (req, res) => {
   try {
     const date1 = Date.now();
-    const { text, coordinates, sessionId = "default" } = req.body;
-    const aiRes = await getAiAns(text);
+    const { text, closest, locs, sessionId = "default" } = req.body;
+    const aiRes = await getAiAns(text, closest, locs);
     console.log(`AI Res: ${(date1 - Date.now()) / 1000}`);
     const audio = await createAudioFileFromText(aiRes);
     if (!audio) {
