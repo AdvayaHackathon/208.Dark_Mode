@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Head from "next/head";
-import Avatar from "@/components/Avatar";
+import Avatar from "../../components/Avatar";
 export default function Home() {
   const [location, setLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);

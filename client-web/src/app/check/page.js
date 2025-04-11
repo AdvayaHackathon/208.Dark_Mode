@@ -184,7 +184,7 @@ export default function Home() {
                 </h2>
                 
                 <h3 className="text-xl font-bold text-white mb-4">
-                  You've discovered a new place!
+                  {`You've discovered a new place!`}
                 </h3>
                 
                 <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-px rounded-lg mb-6">

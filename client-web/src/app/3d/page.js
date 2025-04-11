@@ -1,5 +1,5 @@
 "use client"
-import Avatar from '@/components/Avatar';
+import Avatar from '../../components/Avatar';
 import React from 'react';
 
 function Home() {
