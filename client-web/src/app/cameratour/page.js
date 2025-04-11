@@ -7,6 +7,7 @@ import { getDistance, nearLoc } from "../helpers/loc";
 
 export default function Home() {
   const [locs, setLocs] = useState(null);
+  const [fetchLoading, setFetchLoading] = useState(false);
   const [cameraPermission, setCameraPermission] = useState(false);
   const [closest, setClosest] = useState(null);
   const [cameraError, setCameraError] = useState(null);
@@ -130,7 +131,9 @@ export default function Home() {
         {/* Avatar positioned in the middle */}
         <div className="absolute h-[50%] w-[50%]  flex items-center top-85 bottom-10 right-0 justify-center pointer-events-none ">
           <div className="w-[100%] h-[100%]">
-            <Avatar text={text} closest={closest} locs={locs} />
+            <Avatar text={text} closest={closest} locs={locs}
+              fetchLoading={fetchLoading} setFetchLoading={setFetchLoading}
+            />
           </div>
         </div>
 

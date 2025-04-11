@@ -22,7 +22,7 @@ function Cube(props) {
   );
 }
 
-function Avatar({ text, closest, locs }) {
+function Avatar({ text, closest, locs, fetchLoading, setFetchLoading }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
   const [playAudio, setPlayAudio] = useState(false);
@@ -48,13 +48,16 @@ function Avatar({ text, closest, locs }) {
     } catch (error) {
       console.log(error);
     }
+    finally {
+      setFetchLoading(false);
+    }
   }
-  const buttonRef = useRef();
   useEffect(() => {
-    if (text || closest) {
+    if (!fetchLoading && (text || closest)) {
+      setFetchLoading(true);
       handleSubmit();
     }
-  }, [text, closest]);
+  }, [text, closest, fetchLoading]);
   useEffect(() => {
     if (fileCode) {
       setPlayAudio(true);
@@ -62,12 +65,10 @@ function Avatar({ text, closest, locs }) {
   }, [fileCode]);
   return (
     <>
-
       <Canvas
         camera={{ position: [0, 0, 2.5], fov: 50, far: 500000, near: 0.1 }} style={{ width: '100%', height: '100%', }}
         gl={{ alpha: true }}
       >
-
         <ambientLight />
         {/* <OrbitControls /> */}
         {/* <Effects disableGamma>
