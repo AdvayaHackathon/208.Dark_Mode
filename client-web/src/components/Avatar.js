@@ -54,7 +54,7 @@ function Avatar({ text, closest, locs }) {
     if (text || closest) {
       handleSubmit();
     }
-  }, [text, closest])
+  }, [text, closest]);
   useEffect(() => {
     if (fileCode) {
       setPlayAudio(true);
