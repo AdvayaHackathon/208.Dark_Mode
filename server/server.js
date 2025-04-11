@@ -108,7 +108,7 @@ app.use("/audio", express.static("./public/audio"));
 app.post("/ai/talk", async (req, res) => {
   try {
     const date1 = Date.now();
-    const { text, coordinates, sessionId } = req.body;
+    const { text, coordinates, sessionId = "default" } = req.body;
     const aiRes = await getAiAns(text);
     console.log(`AI Res: ${(date1 - Date.now()) / 1000}`);
     const audio = await createAudioFileFromText(aiRes);
@@ -143,6 +143,41 @@ app.post("/ai/talk", async (req, res) => {
     res.status(400).send({ status: false, error: error, message: "Server Error" });
   }
 });
+
+const nearLoc = {
+  "stockTicker": {
+    lat: 13.0046224,
+    long: 77.5445979
+  },
+  "weldingMachine": {
+    lat: 13.0046236,
+    long: 77.5444309
+  },
+  "mbaBridge": {
+    lat: 13.0048915,
+    long: 77.544302
+  },
+  "mbaAILab": {
+    lat: 13.0049606,
+    long: 77.5443197
+  },
+  "mbaDigitalClassroom": {
+    lat: 13.0050253,
+    long: 77.5445982
+  },
+}
+
+app.post("/detect/loc", (req, res) => {
+  try {
+    const { coords } = req.body;
+    console.log(coords);
+    res.status(200).send({ staus: true });
+    return;
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ status: false, error: error, message: "Server Error" });
+  }
+})
 
 app.get("/mouth/talk/:fileCode", async (req, res) => {
   try {
