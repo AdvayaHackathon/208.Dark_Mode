@@ -134,19 +134,19 @@ app.post("/ai/talk", async (req, res) => {
     const { text, closest, locs, sessionId = "default" } = req.body;
     const aiRes = await getAiAns(text, closest, locs);
     console.log(`AI Res: ${(date1 - Date.now()) / 1000}`);
-    // const audio = await createAudioFileFromText(aiRes);
-    // if (!audio) {
-    //   res.status(400).send({ status: false, error: error, message: "Server Error" });
-    //   return;
-    // }
+    const audio = await createAudioFileFromText(aiRes);
+    if (!audio) {
+      res.status(400).send({ status: false, error: error, message: "Server Error" });
+      return;
+    }
     console.log(`AI Audio: ${(date1 - Date.now()) / 1000}`);
-    // const { fileCode } = audio;
-    const fileCode = "4b60fd";
-    // const resConvert = convertMp3ToOgg(fileCode);
-    // if (resConvert == null) {
-    //   res.status(400).send({ status: false, message: "Server Error" });
-    //   return;
-    // }
+    const { fileCode } = audio;
+    // const fileCode = "4b60fd";
+    const resConvert = convertMp3ToOgg(fileCode);
+    if (resConvert == null) {
+      res.status(400).send({ status: false, message: "Server Error" });
+      return;
+    }
     console.log(`AI Convert: ${(date1 - Date.now()) / 1000}`);
     const resLipSync = getLipSync(JSON.stringify({ text: aiRes, fileCode }));
     if (resLipSync == null) {
