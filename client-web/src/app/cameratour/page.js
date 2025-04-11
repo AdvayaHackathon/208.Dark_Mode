@@ -1,13 +1,11 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import Avatar from "@/components/Avatar";
-import Dictaphone from "@/components/voice";
+import Avatar from "../../components/Avatar";
+import Dictaphone from "../../components/voice";
 import { getDistance, nearLoc } from "../helpers/loc";
 
 
 export default function Home() {
-  const [location, setLocation] = useState(null);
-  const [locationError, setLocationError] = useState(null);
   const [locs, setLocs] = useState(null);
   const [cameraPermission, setCameraPermission] = useState(false);
   const [closest, setClosest] = useState(null);
@@ -61,26 +59,6 @@ export default function Home() {
       return () => navigator.geolocation.clearWatch(watchId);
     }
   }, []);
-  // useEffect(() => {
-  //   if (navigator.geolocation) {
-  //     navigator.geolocation.getCurrentPosition(
-  //       (position) => {
-  //         setLocation({
-  //           latitude: position.coords.latitude,
-  //           longitude: position.coords.longitude,
-  //         });
-  //       },
-  //       (error) => {
-  //         setLocationError(`Error getting location: ${error.message}`);
-  //       },
-  //       { enableHighAccuracy: true }
-  //     );
-  //   } else {
-  //     setLocationError("Geolocation is not supported by this browser.");
-  //   }
-  // }, []);
-
-  // Handle camera access
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
