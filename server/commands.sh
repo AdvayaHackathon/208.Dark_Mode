@@ -1,0 +1,1 @@
+./lip-sync/rhubarb -f json  ./public/audio/03486c.ogg -o ./public/lip-sync/03486c.json 
