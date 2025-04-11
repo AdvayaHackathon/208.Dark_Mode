@@ -4,7 +4,7 @@ import { Canvas, useFrame, extend } from '@react-three/fiber';
 import { Model } from './Model';
 import { Effects, OrbitControls } from '@react-three/drei';
 import { UnrealBloomPass } from "three-stdlib";
-import { API_URL } from '@/app/helpers/api';
+import { API_URL } from '../app/helpers/api';
 extend({ UnrealBloomPass });
 
 function Cube(props) {
