@@ -20,7 +20,7 @@ function Dictaphone({ setText }) {
     }
   }, [listening]);
   if (!browserSupportsSpeechRecognition) {
-    return <div>Browser doesn't support speech recognition.</div>;
+    return <div>{`Browser doesn't support speech recognition.`}</div>;
   }
 
   return (
