@@ -4,3 +4,4 @@
 /.env
 /public/audio
 /public/lip-sync
+/memory
