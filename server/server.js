@@ -216,6 +216,15 @@ app.get("/mouth/talk/:fileCode", async (req, res) => {
   }
 });
 
+app.get("/", (_, res) => {
+  try {
+    res.status(200).send({ status: true, message: "Hello Tiger!" });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ status: false, error: error })
+  }
+})
+
 app.listen(PORT, () => {
   console.log(`Listening to PORT: ${PORT}`)
 });
