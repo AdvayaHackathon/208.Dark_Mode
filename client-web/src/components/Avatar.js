@@ -51,10 +51,19 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
   }
   useEffect(() => {
     if (cameraPermission && !fetchLoading && (text || closest)) {
+      if (text) {
+        setFetchLoading(true);
+        handleSubmit();
+        if (closest && visPlace.indexOf(closest) === -1) {
+          setVisPlace([...visPlace, closest]);
+        }
+        return;
+      }
       if (visPlace.indexOf(closest) === -1) {
         setVisPlace([...visPlace, closest]);
         setFetchLoading(true);
         handleSubmit();
+        return;
       }
     }
   }, [text, closest, fetchLoading, cameraPermission]);
