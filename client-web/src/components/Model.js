@@ -29,7 +29,7 @@ const corresponding = {
 const visValues = Object.values(corresponding);
 
 
-export function Model({ fileCode, mouthTalk, playAudio, setFetchLoading }) {
+export function Model({ fileCode, mouthTalk, setFetchLoading }) {
   const { scene } = useGLTF(modelPath);
   const modelRef = useRef();
   const [blink, setBlink] = useState(false);
@@ -41,14 +41,14 @@ export function Model({ fileCode, mouthTalk, playAudio, setFetchLoading }) {
   }, [fileCode]);
   const [ani, setAni] = useState("idle");
   useEffect(() => {
-    if (fileCode && audio && playAudio) {
+    if (fileCode && audio) {
       audio?.play();
       audio.onended = (_) => { setAni("idle"); setFetchLoading(false); };
       setAni("talk");
     } else {
       audio?.pause();
     }
-  }, [audio, fileCode, playAudio]);
+  }, [audio, fileCode]);
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
   const { animations: idleAnimations } = useFBX("/Idle.fbx");

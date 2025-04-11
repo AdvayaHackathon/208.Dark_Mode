@@ -25,7 +25,7 @@ function Cube(props) {
 function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPermission }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
-  const [playAudio, setPlayAudio] = useState(false);
+  const [visPlace, setVisPlace] = useState([]);
   async function handleSubmit() {
     try {
       const res = await fetch(`${API_URL}/ai/talk`, {
@@ -51,15 +51,14 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
   }
   useEffect(() => {
     if (cameraPermission && !fetchLoading && (text || closest)) {
-      setFetchLoading(true);
-      handleSubmit();
+      if (visPlace.indexOf(closest) === -1) {
+        setVisPlace([...visPlace, closest]);
+        setFetchLoading(true);
+        handleSubmit();
+      }
     }
   }, [text, closest, fetchLoading, cameraPermission]);
-  useEffect(() => {
-    if (fileCode) {
-      setPlayAudio(true);
-    }
-  }, [fileCode]);
+  console.log("fetchLoading: ", fetchLoading);
   return (
     <>
       <Canvas
@@ -74,7 +73,7 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
         <pointLight intensity={50} position={[1, -2, 4]} />
         <group position={[0, -1.2, 1]} rotation={[Math.PI / 10, 0, 0]}>
           <group rotation={[-Math.PI / 2, 0, 0]}>
-            <Model fileCode={fileCode} mouthTalk={mouthTalk} playAudio={playAudio}
+            <Model fileCode={fileCode} mouthTalk={mouthTalk}
               setFetchLoading={setFetchLoading} />
           </group>
         </group>
