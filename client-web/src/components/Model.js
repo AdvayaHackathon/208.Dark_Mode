@@ -29,7 +29,7 @@ const corresponding = {
 const visValues = Object.values(corresponding);
 
 
-export function Model({ fileCode, mouthTalk, playAudio }) {
+export function Model({ fileCode, mouthTalk, playAudio, setFetchLoading }) {
   const { scene } = useGLTF(modelPath);
   const modelRef = useRef();
   const [blink, setBlink] = useState(false);
@@ -43,7 +43,7 @@ export function Model({ fileCode, mouthTalk, playAudio }) {
   useEffect(() => {
     if (fileCode && audio && playAudio) {
       audio?.play();
-      audio.onended = (_) => { setAni("idle") };
+      audio.onended = (_) => { setAni("idle"); setFetchLoading(false); };
       setAni("talk");
     } else {
       audio?.pause();

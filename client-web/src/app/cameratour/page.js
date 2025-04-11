@@ -133,6 +133,7 @@ export default function Home() {
           <div className="w-[100%] h-[100%]">
             <Avatar text={text} closest={closest} locs={locs}
               fetchLoading={fetchLoading} setFetchLoading={setFetchLoading}
+              cameraPermission={cameraPermission}
             />
           </div>
         </div>

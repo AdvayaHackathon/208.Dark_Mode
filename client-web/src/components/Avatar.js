@@ -22,7 +22,7 @@ function Cube(props) {
   );
 }
 
-function Avatar({ text, closest, locs, fetchLoading, setFetchLoading }) {
+function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPermission }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
   const [playAudio, setPlayAudio] = useState(false);
@@ -48,16 +48,13 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading }) {
     } catch (error) {
       console.log(error);
     }
-    finally {
-      setFetchLoading(false);
-    }
   }
   useEffect(() => {
-    if (!fetchLoading && (text || closest)) {
+    if (cameraPermission && !fetchLoading && (text || closest)) {
       setFetchLoading(true);
       handleSubmit();
     }
-  }, [text, closest, fetchLoading]);
+  }, [text, closest, fetchLoading, cameraPermission]);
   useEffect(() => {
     if (fileCode) {
       setPlayAudio(true);
@@ -77,7 +74,8 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading }) {
         <pointLight intensity={50} position={[1, -2, 4]} />
         <group position={[0, -1.2, 1]} rotation={[Math.PI / 10, 0, 0]}>
           <group rotation={[-Math.PI / 2, 0, 0]}>
-            <Model fileCode={fileCode} mouthTalk={mouthTalk} playAudio={playAudio} />
+            <Model fileCode={fileCode} mouthTalk={mouthTalk} playAudio={playAudio}
+              setFetchLoading={setFetchLoading} />
           </group>
         </group>
       </Canvas>
