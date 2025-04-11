@@ -3,36 +3,39 @@ import React, { useEffect, useState } from 'react';
 
 const nearLoc = {
 	"stockTicker": {
-		lat: 13.0046224,
-		long: 77.5445979
+		lat: 13.0045213,
+		long: 77.544636,
+		acc: 13.65
 	},
-	"weldingMachine": {
-		lat: 13.0046236,
-		long: 77.5444309
+	"vendingMachine": {
+		lat: 13.0046345,
+		long: 77.5444103,
+		acc: 12.67
 	},
 	"mbaBridge": {
-		lat: 13.0048915,
-		long: 77.544302
+		lat: 13.0048402,
+		long: 77.5442367,
+		acc: 2.5
 	},
 	"mbaAILab": {
-		lat: 13.0049606,
-		long: 77.5443197
+		lat: 13.0047431,
+		long: 77.5445032,
+		acc: 4.9
 	},
 	"mbaDigitalClassroom": {
-		lat: 13.0050253,
-		long: 77.5445982
+		lat: 13.0052077,
+		long: 77.5445211,
+		acc: 3.18
 	},
 };
 
 function getDistance(lat1, lon1, lat2, lon2) {
 	const toRad = angle => (angle * Math.PI) / 180;
-	const R = 6371000; // Earth's radius in meters
-
+	const R = 6371000; // in meters
 	const dLat = toRad(lat2 - lat1);
 	const dLon = toRad(lon2 - lon1);
 
-	const a =
-		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+	const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
 		Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
 		Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
@@ -43,30 +46,45 @@ function getDistance(lat1, lon1, lat2, lon2) {
 function Home() {
 	const [text1, setText1] = useState("");
 	const [text2, setText2] = useState("");
+	const [closest, setClosest] = useState("");
 	const [updateNo, setUpdateNo] = useState(0);
+
 	useEffect(() => {
 		if (navigator.geolocation) {
 			const watchId = navigator.geolocation.watchPosition(
 				(position) => {
-					const currentLat = position.coords.latitude;
-					const currentLong = position.coords.longitude;
-
-					console.log(`Your location: (${currentLat}, ${currentLong})`);
+					const { latitude, longitude, accuracy } = position.coords;
 					setUpdateNo(u => u + 1);
-					setText1(`Your location: (${currentLat}, ${currentLong})`);
+
+					console.log(`Your location: (${latitude}, ${longitude})`);
+					setText1(`Your location: (${latitude}, ${longitude}), Accuracy: ±${accuracy.toFixed(1)}m`);
 
 					let textAll = "";
+					let bestMatch = null;
+					let bestMatchDistance = Infinity;
+
 					for (const [name, loc] of Object.entries(nearLoc)) {
-						const dist = getDistance(currentLat, currentLong, loc.lat, loc.long);
-						textAll += `${name}: ${dist.toFixed(2)} meters away\n`;
+						const dist = getDistance(latitude, longitude, loc.lat, loc.long);
+						const combinedAcc = accuracy + loc.acc;
+
+						const line = `${name}: ${dist.toFixed(2)} meters away (±${loc.acc}m)\n`;
+						textAll += line;
+
+						// Best match = nearest within combined accuracy
+						if (dist <= combinedAcc && dist < bestMatchDistance) {
+							bestMatch = name;
+							bestMatchDistance = dist;
+						}
 					}
+
+					setClosest(bestMatch ? `Likely at: ${bestMatch}` : "No location matched accurately");
 					setText2(textAll);
 				},
 				(error) => {
 					console.error("Error getting location:", error.message);
 				},
 				{
-					enableHighAccuracy: true, // Use GPS when available
+					enableHighAccuracy: true,
 					timeout: 10000,
 					maximumAge: 0
 				}
@@ -75,14 +93,16 @@ function Home() {
 			return () => navigator.geolocation.clearWatch(watchId);
 		}
 	}, []);
+
 	return (
-		<div>
-			<p>Hello world</p>
+		<div style={{ padding: '1rem' }}>
+			<h2>Live Location</h2>
 			<p>Update No: {updateNo}</p>
 			<p>{text1}</p>
 			<pre>{text2}</pre>
+			<h3 style={{ color: 'green' }}>{closest}</h3>
 		</div>
-	)
+	);
 }
 
-export default Home
+export default Home;
