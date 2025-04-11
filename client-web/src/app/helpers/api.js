@@ -1,1 +1,1 @@
-export const API_URL = `http://localhost:9000`;
+export const API_URL = `https://travel-2-eight.vercel.app`;
