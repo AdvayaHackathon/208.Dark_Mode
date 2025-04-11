@@ -68,39 +68,13 @@ function Home() {
 				{
 					enableHighAccuracy: true, // Use GPS when available
 					timeout: 10000,
-					maximumAge: 1000
+					maximumAge: 0
 				}
 			);
 
 			return () => navigator.geolocation.clearWatch(watchId);
 		}
 	}, []);
-	// useEffect(() => {
-	// 	const intervalId = setInterval(() => {
-	// 		if (window) {
-	// 			console.log("In");
-	// 			setUpdateNo(u => u + 1);
-	// 			window.navigator.geolocation.getCurrentPosition((position) => {
-	// 				const currentLat = position.coords.latitude;
-	// 				const currentLong = position.coords.longitude;
-
-	// 				console.log(`Your location: (${currentLat}, ${currentLong})`);
-	// 				setText1(`Your location: (${currentLat}, ${currentLong})`);
-	// 				let textAll = ""
-	// 				for (const [name, loc] of Object.entries(nearLoc)) {
-	// 					const dist = getDistance(currentLat, currentLong, loc.lat, loc.long);
-	// 					console.log(`${name}: ${dist.toFixed(2)} meters away`);
-	// 					textAll += `${name}: ${dist.toFixed(2)} meters away\n`;
-	// 				}
-	// 				setText2(textAll);
-
-	// 			}, (err) => {
-	// 				console.error('Error getting location:', err.message);
-	// 			});
-	// 		}
-	// 	}, 2000);
-	// 	return () => clearInterval(intervalId);
-	// }, []);
 	return (
 		<div>
 			<p>Hello world</p>
