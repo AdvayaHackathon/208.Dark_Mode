@@ -1,1 +1,1 @@
-export const API_URL = `https://bserver.manojad.dev/`;
+export const API_URL = `https://bserver.manojad.dev`;
