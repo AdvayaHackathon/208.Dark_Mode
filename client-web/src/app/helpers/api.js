@@ -1,1 +1,1 @@
-export const API_URL = `https://travel-2-eight.vercel.app`;
+export const API_URL = `https://bserver.manojad.dev/`;
