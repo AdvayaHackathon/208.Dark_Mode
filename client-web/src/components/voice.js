@@ -25,7 +25,7 @@ function Dictaphone({ setText }) {
 
   return (
     <div>
-      <p className="bg-black">{transcript}</p>
+      <p className="bg-black text-white">{transcript}</p>
       <p>Microphone {listening ? "on" : "off"}</p>
       <div className="flex items-center justify-center gap-2">
         <button
