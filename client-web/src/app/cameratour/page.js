@@ -37,7 +37,7 @@ export default function Home() {
   const { width, height } = useWindowSize(); // Get screen size
 
   useEffect(() => {
-    if (closest) {
+    if (closest && cameraPermission) {
       setShowEffect(true); 
   
       const hideTimeout = setTimeout(() => setShowEffect(false), 6000); 
@@ -46,7 +46,7 @@ export default function Home() {
         clearTimeout(hideTimeout);
       };
     }
-  }, [closest]);
+  }, [closest,cameraPermission]);
   
 
   useEffect(() => {
@@ -181,10 +181,10 @@ export default function Home() {
         )}
 
         {/* Confetti Animation */}
-        <div className="absolute top-40 left-28 ">
+        <div className="absolute transform -translate-x-1/2 -translate-y-1/2 left-16 top-1/2 z-50">
         {showEffect && (
           <Confetti
-            width={width*2}
+            width={width}
             height={height}
             numberOfPieces={200}
             recycle={false}
@@ -196,8 +196,8 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="absolute flex flex-col items-center justify-center bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-xl shadow-2xl"
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="absolute flex flex-col w-[300px] items-center justify-center bg-gradient-to-r from-purple-500 to-blue-500 p-6 rounded-xl shadow-2xl"
           >
             <motion.h1
               initial={{ y: -20 }}
