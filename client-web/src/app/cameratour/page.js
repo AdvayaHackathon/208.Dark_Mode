@@ -6,6 +6,7 @@ import { getDistance, nearLoc } from "../helpers/loc";
 import Confetti from "react-confetti";
 import { motion } from "framer-motion";
 
+
 function useWindowSize() {
   const [size, setSize] = useState({ width: 0, height: 0 });
 
@@ -128,7 +129,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black">
+    <div className="fixed top-0 left-0 w-full h-full">
       {/* Full screen wrapper */}
       <div className="relative w-full h-full">
         {/* Camera Section */}
@@ -180,6 +181,7 @@ export default function Home() {
         )}
 
         {/* Confetti Animation */}
+        <div className="absolute top-40 left-28 ">
         {showEffect && (
           <Confetti
             width={width}
@@ -215,6 +217,7 @@ export default function Home() {
             </motion.p>
           </motion.div>
         )}
+        </div>
 
         {cameraError && (
           <div className="absolute inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80">
