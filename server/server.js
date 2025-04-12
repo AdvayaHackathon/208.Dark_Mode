@@ -90,17 +90,16 @@ async function getAiAns(text, closest, locs) {
       JSON format of this format {lat: number, long: number, acc: number}, 
       and we also give you near location of travel spots to you, in the same JSON format.
 
-      ${nearLoc ? JSON.stringify(nearLoc) : "Near loc should be given. Neglect that for now."}
-      ${closest ? JSON.stringify(contextUser) : "You are not close to any travel spot"}
-      ${closest && `You are closet to ${closest}, here is the details of that place in way the 
-      tour guide would explain them
-      
-      ${spotsDetails[closest]}}`}
-
       Near Dist: ${locs && JSON.stringify(locs.nearLoc)}
 
       If a user ask how to go from location 'a' to 'b', take help of Near Dist, and give them 
       direction to target location in ascending order of dist to the user.
+      
+      ${closest ? JSON.stringify(contextUser) : "You are not close to any travel spot"}
+      ${closest && `You are closet to ${closest}, here is the details of that place in way the 
+      tour guide would explain them:
+      
+      ${spotsDetails[closest]}}`}
       
       Query: ${text ? text : "No query given by user, give brief about their current place"}`,
     });
@@ -114,8 +113,8 @@ async function getAiAns(text, closest, locs) {
 
 const app = express();
 const PORT = 9000;
-// const CORS_ORIGIN = "http://localhost:3000";
-const CORS_ORIGIN = "https://travel-2-eight.vercel.app";
+const CORS_ORIGIN = "http://localhost:3000";
+// const CORS_ORIGIN = "https://travel-2-eight.vercel.app";
 app.set("trust proxy", 1);
 app.use((_, res, next) => {
   res.setHeader("ngrok-skip-browser-warning", "true");
