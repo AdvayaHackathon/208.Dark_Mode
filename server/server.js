@@ -96,6 +96,11 @@ async function getAiAns(text, closest, locs) {
       tour guide would explain them
       
       ${spotsDetails[closest]}}`}
+
+      Near Dist: ${locs && JSON.stringify(locs.nearLoc)}
+
+      If a user ask how to go from location 'a' to 'b', take help of Near Dist, and give them 
+      direction to target location in ascending order of dist to the user.
       
       Query: ${text ? text : "No query given by user, give brief about their current place"}`,
     });

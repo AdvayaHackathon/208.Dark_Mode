@@ -5,6 +5,7 @@ import { Model } from './Model';
 import { Effects, OrbitControls } from '@react-three/drei';
 import { UnrealBloomPass } from "three-stdlib";
 import { API_URL } from '../app/helpers/api';
+import { nearLocVisited } from '@/app/helpers/loc';
 extend({ UnrealBloomPass });
 
 function Cube(props) {
@@ -55,12 +56,42 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
         setFetchLoading(true);
         handleSubmit();
         if (closest && visPlace.indexOf(closest) === -1) {
-          setVisPlace([...visPlace, closest]);
+          const newVis = [...visPlace, closest];
+          setVisPlace(newVis);
+          let vis = window.localStorage.getItem("visited");
+          if (vis) {
+            vis = JSON.parse(vis);
+          } else {
+            vis = nearLocVisited;
+          }
+          for (let i = 0; i < vis.length; i++) {
+            if (vis[i].spotId === closest) {
+              vis[i].date = new Date().toLocaleString();
+              vis[i].visited = true;
+              break;
+            }
+          }
+          window.localStorage.setItem("visited", JSON.stringify(vis));
         }
         return;
       }
       if (visPlace.indexOf(closest) === -1) {
-        setVisPlace([...visPlace, closest]);
+        const newVis = [...visPlace, closest];
+        setVisPlace(newVis);
+        let vis = window.localStorage.getItem("visited");
+        if (vis) {
+          vis = JSON.parse(vis);
+        } else {
+          vis = nearLocVisited;
+        }
+        for (let i = 0; i < vis.length; i++) {
+          if (vis[i].spotId === closest) {
+            vis[i].date = new Date().toLocaleString();
+            vis[i].visited = true;
+            break;
+          }
+        }
+        window.localStorage.setItem("visited", JSON.stringify(vis));
         setFetchLoading(true);
         handleSubmit();
         return;
