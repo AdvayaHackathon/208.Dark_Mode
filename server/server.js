@@ -9,6 +9,8 @@ const { v4: uuid } = require('uuid');
 const path = require("path");
 const { execSync, spawnSync } = require("child_process");
 const { GoogleGenAI } = require("@google/genai");
+const cookieParser = require("cookie-parser");
+const { ClerkCache } = require("./redis");
 
 dotenv.config();
 const GEMINI_KEY = process.env.GEMINI_KEY;
@@ -90,12 +92,12 @@ async function getAiAns(text, closest, locs) {
       JSON format of this format {lat: number, long: number, acc: number}, 
       and we also give you near location of travel spots to you, in the same JSON format.
 
-      Near Dist: ${locs && JSON.stringify(locs.nearLoc)}
+      Near Dist: ${locs && JSON.stringify(locs?.nearLoc)}
 
       If a user ask how to go from location 'a' to 'b', take help of Near Dist, and give them 
       direction to target location in ascending order of dist to the user.
       
-      ${closest ? JSON.stringify(contextUser) : "You are not close to any travel spot"}
+      ${closest && contextUser ? JSON.stringify(contextUser) : "Context location not found. Neglect it for now."}
       ${closest && `You are closet to ${closest}, here is the details of that place in way the 
       tour guide would explain them:
       
@@ -127,15 +129,35 @@ app.use(
     origin: CORS_ORIGIN,
   })
 );
+app.use(cookieParser("cat"));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(hitMiddleWare);
+app.use(async (req, res, next) => {
+  try {
+    next();
+    return;
+    const clerkDb = new ClerkCache();
+    const { sessionId } = req.signedCookies;
+    const resDB = await clerkDb.getSessionByClerkUserId(sessionId);
+    if (!resDB) {
+      res.status(400).send({ status: false, message: "Auth Failed" });
+      return;
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ status: false, message: "Auth Failed", error })
+    return;
+  }
+});
 app.use("/audio", express.static("./public/audio"));
 
 app.post("/ai/talk", async (req, res) => {
   try {
     const date1 = Date.now();
-    const { text, closest, locs, sessionId = "default" } = req.body;
+    const { text, closest, locs, email = "default" } = req.body;
+    console.log(req.body);
     const aiRes = await getAiAns(text, closest, locs);
     console.log(`AI Res: ${(date1 - Date.now()) / 1000}`);
     const audio = await createAudioFileFromText(aiRes);
@@ -146,11 +168,11 @@ app.post("/ai/talk", async (req, res) => {
     console.log(`AI Audio: ${(date1 - Date.now()) / 1000}`);
     const { fileCode } = audio;
     // const fileCode = "4b60fd";
-    const resConvert = convertMp3ToOgg(fileCode);
-    if (resConvert == null) {
-      res.status(400).send({ status: false, message: "Server Error" });
-      return;
-    }
+    // const resConvert = convertMp3ToOgg(fileCode);
+    // if (resConvert == null) {
+    //   res.status(400).send({ status: false, message: "Server Error" });
+    //   return;
+    // }
     console.log(`AI Convert: ${(date1 - Date.now()) / 1000}`);
     const resLipSync = getLipSync(JSON.stringify({ text: aiRes, fileCode }));
     if (resLipSync == null) {
@@ -158,11 +180,11 @@ app.post("/ai/talk", async (req, res) => {
       return;
     }
     const dataMem = JSON.parse(readFileSync("./memory/data.json", { encoding: "utf-8" }));
-    if (!(sessionId in dataMem)) {
-      dataMem[sessionId] = { "chats": [] };
+    if (!(email in dataMem)) {
+      dataMem[email] = { "chats": [] };
     }
-    dataMem[sessionId]["chats"].push({ role: "user", text: text });
-    dataMem[sessionId]["chats"].push({ role: "model", text: aiRes });
+    dataMem[email]["chats"].push({ role: "user", text: text });
+    dataMem[email]["chats"].push({ role: "model", text: aiRes });
     writeFileSync("./memory/data.json", JSON.stringify(dataMem, null, 2), { encoding: "utf-8" });
     console.log(`AI Lip Sync: ${(date1 - Date.now()) / 1000}`);
     res.status(200).send({ status: true, fileCode: fileCode, lipSyncJson: resLipSync, aiRes, });
@@ -195,30 +217,28 @@ const nearLoc = {
   },
 }
 
-app.post("/detect/loc", (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-    const { coords } = req.body;
-    console.log(coords);
-    res.status(200).send({ staus: true });
-    return;
-  } catch (error) {
-    console.log(error);
-    res.status(400).send({ status: false, error: error, message: "Server Error" });
-  }
-})
-
-app.get("/mouth/talk/:fileCode", async (req, res) => {
-  try {
-    const { fileCode } = req.params;
-    const resLipSync = JSON.parse(readFileSync(`./public/lip-sync/${fileCode}.json`));
-    if (!resLipSync) {
-      res.status(400).send({ status: false, message: "Server Error" });
+    const clerkDb = new ClerkCache();
+    const { email } = req.body;
+    const sessionId = uuid();
+    const resDb = await clerkDb.createSessionByClerkUserId(email, sessionId);
+    if (!resDb) {
+      res.status(400).send({ status: false });
       return;
     }
-    res.status(200).send({ status: true, fileCode: fileCode, lipSyncJson: resLipSync, });
+    res.cookie("sessionId", sessionId, {
+      httpOnly: true,
+      secure: true,
+      signed: true,
+      path: "/",
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 15,
+    });
+    res.status(200).send({ status: true });
   } catch (error) {
     console.log(error);
-    res.status(400).send({ status: false, error: error, message: "Server Error" });
+    res.status(400).send({ status: false, error: error })
   }
 });
 
@@ -229,7 +249,7 @@ app.get("/", (_, res) => {
     console.log(error);
     res.status(400).send({ status: false, error: error })
   }
-})
+});
 
 app.listen(PORT, () => {
   console.log(`Listening to PORT: ${PORT}`);

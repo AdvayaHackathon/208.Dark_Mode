@@ -5,7 +5,7 @@ import sys
 
 python_dict = json.loads(sys.argv[1])
 text = python_dict["text"]
-info = mediainfo(f"./public/audio/{python_dict["fileCode"]}.ogg")
+info = mediainfo(f"./public/audio/{python_dict["fileCode"]}.mp3")
 duration = float(info['duration'])
 
 # G2P conversion
