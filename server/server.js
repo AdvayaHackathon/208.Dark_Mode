@@ -215,7 +215,7 @@ const nearLoc = {
     lat: 13.0050253,
     long: 77.5445982
   },
-}
+};
 
 app.post("/login", async (req, res) => {
   try {
