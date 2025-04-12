@@ -115,8 +115,8 @@ async function getAiAns(text, closest, locs) {
 
 const app = express();
 const PORT = 9000;
-const CORS_ORIGIN = "http://localhost:3000";
-// const CORS_ORIGIN = "https://travel-2-eight.vercel.app";
+// const CORS_ORIGIN = "http://localhost:3000";
+const CORS_ORIGIN = "https://travel-2-eight.vercel.app";
 app.set("trust proxy", 1);
 app.use((_, res, next) => {
   res.setHeader("ngrok-skip-browser-warning", "true");
