@@ -25,22 +25,22 @@ function Cube(props) {
   );
 }
 
-function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPermission }) {
+function Avatar({ text, setText, closest, locs, fetchLoading, setFetchLoading, cameraPermission }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
   const [visPlace, setVisPlace] = useState([]);
-  const {user} = useUser();
+  const { user } = useUser();
   async function handleSubmit() {
     try {
       const email = String(user.emailAddresses[0].emailAddress);
-      
+
       const res = await fetch(`${API_URL}/ai/talk`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
         },
-        body: JSON.stringify({ text, closest, locs,email })
+        body: JSON.stringify({ text, closest, locs, email })
       });
       const resJson = await res.json();
       console.log(resJson);
@@ -53,6 +53,9 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
       }
     } catch (error) {
       console.log(error);
+    }
+    finally {
+      setText("")
     }
   }
   useEffect(() => {
