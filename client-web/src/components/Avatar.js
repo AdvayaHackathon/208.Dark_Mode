@@ -25,10 +25,9 @@ function Cube(props) {
   );
 }
 
-function Avatar({ text, setText, closest, locs, fetchLoading, setFetchLoading, cameraPermission }) {
+function Avatar({ text, setText, closest, locs, fetchLoading, setFetchLoading, cameraPermission, visPlace, setVisPlace }) {
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
-  const [visPlace, setVisPlace] = useState([]);
   const { user } = useUser();
   async function handleSubmit() {
     try {
@@ -105,7 +104,7 @@ function Avatar({ text, setText, closest, locs, fetchLoading, setFetchLoading, c
         return;
       }
     }
-  }, [text, closest, fetchLoading, cameraPermission]);
+  }, [text, closest, fetchLoading, cameraPermission, visPlace]);
   console.log("fetchLoading: ", fetchLoading);
   return (
     <>

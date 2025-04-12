@@ -31,6 +31,7 @@ export default function Home() {
   const [closest, setClosest] = useState(null);
   const [cameraError, setCameraError] = useState(null);
   const videoRef = useRef(null);
+  const [visPlace, setVisPlace] = useState([]);
   const [text, setText] = useState("");
 
   const [showEffect, setShowEffect] = useState(false);
