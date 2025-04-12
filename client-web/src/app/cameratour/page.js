@@ -184,7 +184,7 @@ export default function Home() {
         <div className="absolute top-40 left-28 ">
         {showEffect && (
           <Confetti
-            width={width}
+            width={width*2}
             height={height}
             numberOfPieces={200}
             recycle={false}
