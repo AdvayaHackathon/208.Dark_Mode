@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import Avatar from "../../components/Avatar";
 import Dictaphone from "../../components/voice";
 import { getDistance, nearLoc } from "../helpers/loc";
+import Confetti from "react-confetti";
+import { motion } from "framer-motion";
 
 function useWindowSize() {
   const [size, setSize] = useState({ width: 0, height: 0 });

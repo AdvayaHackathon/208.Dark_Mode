@@ -103,9 +103,12 @@ export default function Home() {
                 menuOpen ? "flex" : "hidden"
               } md:flex absolute md:relative top-full left-0 right-0 md:top-auto md:left-auto md:right-auto flex-col md:flex-row items-center gap-6 bg-black/80 md:bg-transparent p-6 md:p-0`}
             >
-              <Button className="bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-700 hover:to-purple-700 text-white border-0">
-                Get Started
-              </Button>
+              <Link href={"/cameratour"}>
+                <Button className="bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-700 hover:to-purple-700 text-white border-0">
+                  Get Started
+                </Button>
+              </Link>
+
               <SignedOut>
                 <SignInButton />
                 <SignUpButton />
@@ -316,8 +319,6 @@ export default function Home() {
                 <Cube className="h-8 w-8 text-fuchsia-500" />
                 <span className="text-white font-bold text-xl">DEEPIKA</span>
               </div>
-
-             
 
               <div className="flex gap-4">
                 <Button
