@@ -6,7 +6,9 @@ import { Effects, OrbitControls } from '@react-three/drei';
 import { UnrealBloomPass } from "three-stdlib";
 import { API_URL } from '../app/helpers/api';
 import { nearLocVisited } from '../app/helpers/loc';
+import { useUser } from "@clerk/nextjs";
 extend({ UnrealBloomPass });
+
 
 function Cube(props) {
   const meshRef = useRef();
@@ -27,15 +29,18 @@ function Avatar({ text, closest, locs, fetchLoading, setFetchLoading, cameraPerm
   const [fileCode, setFileCode] = useState(null);
   const [mouthTalk, setMouthTalk] = useState(null);
   const [visPlace, setVisPlace] = useState([]);
+  const {user} = useUser();
   async function handleSubmit() {
     try {
+      const email = String(user.emailAddresses[0].emailAddress);
+      
       const res = await fetch(`${API_URL}/ai/talk`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "ngrok-skip-browser-warning": "true",
         },
-        body: JSON.stringify({ text, closest, locs })
+        body: JSON.stringify({ text, closest, locs,email })
       });
       const resJson = await res.json();
       console.log(resJson);
