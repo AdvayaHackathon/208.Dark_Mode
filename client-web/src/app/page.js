@@ -103,30 +103,6 @@ export default function Home() {
                 menuOpen ? "flex" : "hidden"
               } md:flex absolute md:relative top-full left-0 right-0 md:top-auto md:left-auto md:right-auto flex-col md:flex-row items-center gap-6 bg-black/80 md:bg-transparent p-6 md:p-0`}
             >
-              <Link
-                href="#"
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="#"
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                Showcase
-              </Link>
-              <Link
-                href="#"
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                Pricing
-              </Link>
-              <Link
-                href="#"
-                className="text-white/80 hover:text-white transition-colors"
-              >
-                About
-              </Link>
               <Button className="bg-gradient-to-r from-fuchsia-600 to-purple-600 hover:from-fuchsia-700 hover:to-purple-700 text-white border-0">
                 Get Started
               </Button>
@@ -341,38 +317,7 @@ export default function Home() {
                 <span className="text-white font-bold text-xl">DEEPIKA</span>
               </div>
 
-              <div className="flex flex-wrap justify-center gap-8 mb-6 md:mb-0">
-                <Link
-                  href="#"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Features
-                </Link>
-                <Link
-                  href="#"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Showcase
-                </Link>
-                <Link
-                  href="#"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="#"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  About
-                </Link>
-                <Link
-                  href="#"
-                  className="text-white/70 hover:text-white transition-colors"
-                >
-                  Contact
-                </Link>
-              </div>
+             
 
               <div className="flex gap-4">
                 <Button
